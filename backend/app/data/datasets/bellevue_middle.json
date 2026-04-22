@@ -1,0 +1,284 @@
+{
+  "dataset_id": "bellevue_middle",
+  "name": "Bellevue Middle Demo",
+  "school_name": "Newport Middle School",
+  "school_level": "middle",
+  "school_lat": 47.5890,
+  "school_lng": -122.1510,
+
+  "stops": [
+    {
+      "stop_id": "BM-S01", "name": "NE 16th St & 140th Ave NE",
+      "lat": 47.6089, "lng": -122.1645, "zone_id": "Z4", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BM-S02", "name": "NE 12th St & 138th Ave NE",
+      "lat": 47.6034, "lng": -122.1623, "zone_id": "Z4", "estimated_riders": 8
+    },
+    {
+      "stop_id": "BM-S03", "name": "NE 8th St & 136th Ave NE",
+      "lat": 47.5978, "lng": -122.1578, "zone_id": "Z4", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BM-S04", "name": "NE 4th St & 135th Ave NE",
+      "lat": 47.5934, "lng": -122.1556, "zone_id": "Z4", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BM-S05", "name": "NE 20th St & 156th Ave NE",
+      "lat": 47.6112, "lng": -122.1312, "zone_id": "Z5", "estimated_riders": 9
+    },
+    {
+      "stop_id": "BM-S06", "name": "NE 16th St & 154th Ave NE",
+      "lat": 47.6067, "lng": -122.1356, "zone_id": "Z5", "estimated_riders": 8
+    },
+    {
+      "stop_id": "BM-S07", "name": "NE 12th St & 152nd Ave NE",
+      "lat": 47.6023, "lng": -122.1389, "zone_id": "Z5", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BM-S08", "name": "NE 8th St & 150th Ave NE",
+      "lat": 47.5978, "lng": -122.1423, "zone_id": "Z5", "estimated_riders": 9
+    },
+    {
+      "stop_id": "BM-S09", "name": "NE 4th St & 148th Ave NE",
+      "lat": 47.5934, "lng": -122.1456, "zone_id": "Z5", "estimated_riders": 9
+    },
+    {
+      "stop_id": "BM-S10", "name": "NE 2nd St & 147th Ave NE",
+      "lat": 47.5901, "lng": -122.1478, "zone_id": "Z5", "estimated_riders": 9
+    },
+    {
+      "stop_id": "BM-S11", "name": "SE 12th St & 147th Ave NE",
+      "lat": 47.5756, "lng": -122.1489, "zone_id": "Z6", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BM-S12", "name": "SE 8th St & 146th Ave NE",
+      "lat": 47.5789, "lng": -122.1467, "zone_id": "Z6", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BM-S13", "name": "SE 4th St & 145th Ave NE",
+      "lat": 47.5823, "lng": -122.1456, "zone_id": "Z6", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BM-S14", "name": "SE 2nd St & 144th Ave NE",
+      "lat": 47.5856, "lng": -122.1445, "zone_id": "Z6", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BM-S15", "name": "SE 1st St & 143rd Ave NE",
+      "lat": 47.5879, "lng": -122.1434, "zone_id": "Z6", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BM-S16", "name": "NE 8th St & 130th Ave NE",
+      "lat": 47.5978, "lng": -122.1712, "zone_id": "Z7", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BM-S17", "name": "NE 4th St & 131st Ave NE",
+      "lat": 47.5934, "lng": -122.1689, "zone_id": "Z7", "estimated_riders": 8
+    },
+    {
+      "stop_id": "BM-S18", "name": "NE 1st St & 132nd Ave NE",
+      "lat": 47.5901, "lng": -122.1667, "zone_id": "Z7", "estimated_riders": 6
+    }
+  ],
+
+  "zones": [
+    {
+      "zone_id": "Z4", "name": "Northwest Catchment",
+      "polygon": [
+        [47.615, -122.155], [47.615, -122.175],
+        [47.590, -122.175], [47.590, -122.155]
+      ],
+      "school_level": "middle",
+      "peak_demand_multiplier": 0.9
+    },
+    {
+      "zone_id": "Z5", "name": "Northeast Catchment",
+      "polygon": [
+        [47.615, -122.125], [47.615, -122.155],
+        [47.585, -122.155], [47.585, -122.125]
+      ],
+      "school_level": "middle",
+      "peak_demand_multiplier": 1.1
+    },
+    {
+      "zone_id": "Z6", "name": "Southeast Catchment",
+      "polygon": [
+        [47.590, -122.135], [47.590, -122.155],
+        [47.570, -122.155], [47.570, -122.135]
+      ],
+      "school_level": "middle",
+      "peak_demand_multiplier": 1.0
+    },
+    {
+      "zone_id": "Z7", "name": "Southwest Catchment",
+      "polygon": [
+        [47.605, -122.155], [47.605, -122.180],
+        [47.585, -122.180], [47.585, -122.155]
+      ],
+      "school_level": "middle",
+      "peak_demand_multiplier": 0.75
+    }
+  ],
+
+  "routes": [
+    {
+      "route_id": "BM-R1",
+      "name": "Northwest Loop",
+      "color": "#E63946",
+      "bus_capacity": 72,
+      "departure_time": "07:43",
+      "total_distance_km": 10.2,
+      "total_duration_minutes": 32,
+      "avg_load_factor": 0.375,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BM-S01", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BM-S02", "sequence": 2, "arrival_offset_minutes": 8},
+        {"stop_id": "BM-S03", "sequence": 3, "arrival_offset_minutes": 16},
+        {"stop_id": "BM-S04", "sequence": 4, "arrival_offset_minutes": 23}
+      ]
+    },
+    {
+      "route_id": "BM-R2",
+      "name": "Northeast Express",
+      "color": "#457B9D",
+      "bus_capacity": 72,
+      "departure_time": "07:39",
+      "total_distance_km": 11.8,
+      "total_duration_minutes": 36,
+      "avg_load_factor": 0.708,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BM-S05", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BM-S06", "sequence": 2, "arrival_offset_minutes": 6},
+        {"stop_id": "BM-S07", "sequence": 3, "arrival_offset_minutes": 12},
+        {"stop_id": "BM-S08", "sequence": 4, "arrival_offset_minutes": 18},
+        {"stop_id": "BM-S09", "sequence": 5, "arrival_offset_minutes": 24},
+        {"stop_id": "BM-S10", "sequence": 6, "arrival_offset_minutes": 30}
+      ]
+    },
+    {
+      "route_id": "BM-R3",
+      "name": "Southeast Run",
+      "color": "#2A9D8F",
+      "bus_capacity": 72,
+      "departure_time": "07:53",
+      "total_distance_km": 7.4,
+      "total_duration_minutes": 22,
+      "avg_load_factor": 0.444,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BM-S11", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BM-S12", "sequence": 2, "arrival_offset_minutes": 4},
+        {"stop_id": "BM-S13", "sequence": 3, "arrival_offset_minutes": 8},
+        {"stop_id": "BM-S14", "sequence": 4, "arrival_offset_minutes": 12},
+        {"stop_id": "BM-S15", "sequence": 5, "arrival_offset_minutes": 16}
+      ]
+    },
+    {
+      "route_id": "BM-R4",
+      "name": "Southwest Shuttle",
+      "color": "#F4A261",
+      "bus_capacity": 72,
+      "departure_time": "07:47",
+      "total_distance_km": 8.9,
+      "total_duration_minutes": 28,
+      "avg_load_factor": 0.292,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BM-S16", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BM-S17", "sequence": 2, "arrival_offset_minutes": 9},
+        {"stop_id": "BM-S18", "sequence": 3, "arrival_offset_minutes": 18}
+      ]
+    }
+  ],
+
+  "optimized_scenario": {
+    "eliminated_routes": ["BM-R4"],
+    "total_distance_km": 33.7,
+    "total_duration_minutes": 103,
+    "routes": [
+      {
+        "route_id": "BM-R1-OPT",
+        "name": "West Combined Loop",
+        "color": "#E63946",
+        "bus_capacity": 72,
+        "departure_time": "07:29",
+        "total_distance_km": 14.8,
+        "total_duration_minutes": 46,
+        "avg_load_factor": 0.667,
+        "merged_from": ["BM-R4", "BM-R1"],
+        "stops": [
+          {"stop_id": "BM-S16", "sequence": 1, "arrival_offset_minutes": 0},
+          {"stop_id": "BM-S17", "sequence": 2, "arrival_offset_minutes": 9},
+          {"stop_id": "BM-S18", "sequence": 3, "arrival_offset_minutes": 18},
+          {"stop_id": "BM-S01", "sequence": 4, "arrival_offset_minutes": 26},
+          {"stop_id": "BM-S02", "sequence": 5, "arrival_offset_minutes": 33},
+          {"stop_id": "BM-S03", "sequence": 6, "arrival_offset_minutes": 39},
+          {"stop_id": "BM-S04", "sequence": 7, "arrival_offset_minutes": 43}
+        ]
+      },
+      {
+        "route_id": "BM-R2-OPT",
+        "name": "Northeast Express",
+        "color": "#457B9D",
+        "bus_capacity": 72,
+        "departure_time": "07:40",
+        "total_distance_km": 11.5,
+        "total_duration_minutes": 35,
+        "avg_load_factor": 0.708,
+        "merged_from": null,
+        "stops": [
+          {"stop_id": "BM-S05", "sequence": 1, "arrival_offset_minutes": 0},
+          {"stop_id": "BM-S06", "sequence": 2, "arrival_offset_minutes": 6},
+          {"stop_id": "BM-S07", "sequence": 3, "arrival_offset_minutes": 11},
+          {"stop_id": "BM-S08", "sequence": 4, "arrival_offset_minutes": 17},
+          {"stop_id": "BM-S09", "sequence": 5, "arrival_offset_minutes": 23},
+          {"stop_id": "BM-S10", "sequence": 6, "arrival_offset_minutes": 29}
+        ]
+      },
+      {
+        "route_id": "BM-R3-OPT",
+        "name": "Southeast Run",
+        "color": "#2A9D8F",
+        "bus_capacity": 72,
+        "departure_time": "07:53",
+        "total_distance_km": 7.4,
+        "total_duration_minutes": 22,
+        "avg_load_factor": 0.444,
+        "merged_from": null,
+        "stops": [
+          {"stop_id": "BM-S11", "sequence": 1, "arrival_offset_minutes": 0},
+          {"stop_id": "BM-S12", "sequence": 2, "arrival_offset_minutes": 4},
+          {"stop_id": "BM-S13", "sequence": 3, "arrival_offset_minutes": 8},
+          {"stop_id": "BM-S14", "sequence": 4, "arrival_offset_minutes": 12},
+          {"stop_id": "BM-S15", "sequence": 5, "arrival_offset_minutes": 16}
+        ]
+      }
+    ]
+  },
+
+  "traffic_context": {
+    "peak_window": "07:00–08:15",
+    "zones": {
+      "Z4": {"congestion_level": "medium", "peak_delay_minutes": 3.8},
+      "Z5": {"congestion_level": "low",    "peak_delay_minutes": 2.1},
+      "Z6": {"congestion_level": "low",    "peak_delay_minutes": 1.5},
+      "Z7": {"congestion_level": "medium", "peak_delay_minutes": 4.2}
+    },
+    "notes": "Z4 and Z7 experience moderate delays due to SR-520 on-ramp backups on weekday mornings. Z5 and Z6 are predominantly residential with free-flowing traffic."
+  },
+
+  "demand_context": {
+    "total_enrolled": 487,
+    "bus_eligible_pct": 0.269,
+    "total_estimated_riders": 131,
+    "zones": {
+      "Z4": {"estimated_students": 27, "current_capacity": 72},
+      "Z5": {"estimated_students": 51, "current_capacity": 72},
+      "Z6": {"estimated_students": 32, "current_capacity": 72},
+      "Z7": {"estimated_students": 21, "current_capacity": 72}
+    },
+    "notes": "Z7 (Southwest) is severely underutilized at 29% capacity, with only 21 students served by a dedicated bus. Z4 is also below 40% utilization. Both western zones should be evaluated for consolidation."
+  }
+}

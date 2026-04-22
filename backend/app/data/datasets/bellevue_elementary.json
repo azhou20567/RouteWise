@@ -1,0 +1,241 @@
+{
+  "dataset_id": "bellevue_elementary",
+  "name": "Bellevue Elementary Demo",
+  "school_name": "Clyde Hill Elementary",
+  "school_level": "elementary",
+  "school_lat": 47.6235,
+  "school_lng": -122.2198,
+
+  "stops": [
+    {
+      "stop_id": "BE-S01", "name": "NE 24th St & 108th Ave NE",
+      "lat": 47.6389, "lng": -122.2023, "zone_id": "Z1", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BE-S02", "name": "NE 20th St & 106th Ave NE",
+      "lat": 47.6334, "lng": -122.2045, "zone_id": "Z1", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BE-S03", "name": "NE 16th St & 107th Ave NE",
+      "lat": 47.6289, "lng": -122.2034, "zone_id": "Z1", "estimated_riders": 8
+    },
+    {
+      "stop_id": "BE-S04", "name": "NE 12th St & 108th Ave NE",
+      "lat": 47.6245, "lng": -122.2023, "zone_id": "Z1", "estimated_riders": 5
+    },
+    {
+      "stop_id": "BE-S05", "name": "NE 10th St & 109th Ave NE",
+      "lat": 47.6223, "lng": -122.2012, "zone_id": "Z1", "estimated_riders": 4
+    },
+    {
+      "stop_id": "BE-S06", "name": "Overlake Dr NE & 84th Ave NE",
+      "lat": 47.6345, "lng": -122.2456, "zone_id": "Z2", "estimated_riders": 5
+    },
+    {
+      "stop_id": "BE-S07", "name": "Medina Rd NE & NE 12th St",
+      "lat": 47.6289, "lng": -122.2512, "zone_id": "Z2", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BE-S08", "name": "84th Ave NE & NE 8th St",
+      "lat": 47.6256, "lng": -122.2489, "zone_id": "Z2", "estimated_riders": 5
+    },
+    {
+      "stop_id": "BE-S09", "name": "86th Ave NE & NE 4th St",
+      "lat": 47.6223, "lng": -122.2445, "zone_id": "Z2", "estimated_riders": 5
+    },
+    {
+      "stop_id": "BE-S10", "name": "88th Ave NE & Clyde Hill Rd",
+      "lat": 47.6198, "lng": -122.2356, "zone_id": "Z2", "estimated_riders": 4
+    },
+    {
+      "stop_id": "BE-S11", "name": "Main St & 100th Ave NE",
+      "lat": 47.6134, "lng": -122.2012, "zone_id": "Z3", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BE-S12", "name": "NE 2nd St & 102nd Ave NE",
+      "lat": 47.6101, "lng": -122.1989, "zone_id": "Z3", "estimated_riders": 8
+    },
+    {
+      "stop_id": "BE-S13", "name": "Bellevue Way NE & NE 1st St",
+      "lat": 47.6067, "lng": -122.2023, "zone_id": "Z3", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BE-S14", "name": "100th Ave NE & SE 1st St",
+      "lat": 47.6034, "lng": -122.2045, "zone_id": "Z3", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BE-S15", "name": "SE 2nd St & 100th Ave NE",
+      "lat": 47.6001, "lng": -122.2056, "zone_id": "Z3", "estimated_riders": 6
+    },
+    {
+      "stop_id": "BE-S16", "name": "SE 4th St & 101st Ave NE",
+      "lat": 47.5978, "lng": -122.2067, "zone_id": "Z3", "estimated_riders": 7
+    },
+    {
+      "stop_id": "BE-S17", "name": "SE 6th St & 100th Ave NE",
+      "lat": 47.5956, "lng": -122.2078, "zone_id": "Z3", "estimated_riders": 7
+    }
+  ],
+
+  "zones": [
+    {
+      "zone_id": "Z1", "name": "North Bellevue",
+      "polygon": [
+        [47.645, -122.190], [47.645, -122.215],
+        [47.618, -122.215], [47.618, -122.190]
+      ],
+      "school_level": "elementary",
+      "peak_demand_multiplier": 1.0
+    },
+    {
+      "zone_id": "Z2", "name": "West Bellevue / Medina",
+      "polygon": [
+        [47.640, -122.215], [47.640, -122.260],
+        [47.615, -122.260], [47.615, -122.215]
+      ],
+      "school_level": "elementary",
+      "peak_demand_multiplier": 0.85
+    },
+    {
+      "zone_id": "Z3", "name": "Central / South Bellevue",
+      "polygon": [
+        [47.618, -122.190], [47.618, -122.215],
+        [47.592, -122.215], [47.592, -122.190]
+      ],
+      "school_level": "elementary",
+      "peak_demand_multiplier": 1.15
+    }
+  ],
+
+  "routes": [
+    {
+      "route_id": "BE-R1",
+      "name": "North Loop",
+      "color": "#E63946",
+      "bus_capacity": 72,
+      "departure_time": "07:52",
+      "total_distance_km": 12.4,
+      "total_duration_minutes": 38,
+      "avg_load_factor": 0.417,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BE-S01", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BE-S02", "sequence": 2, "arrival_offset_minutes": 5},
+        {"stop_id": "BE-S03", "sequence": 3, "arrival_offset_minutes": 10},
+        {"stop_id": "BE-S04", "sequence": 4, "arrival_offset_minutes": 15},
+        {"stop_id": "BE-S05", "sequence": 5, "arrival_offset_minutes": 20}
+      ]
+    },
+    {
+      "route_id": "BE-R2",
+      "name": "West Medina Loop",
+      "color": "#457B9D",
+      "bus_capacity": 72,
+      "departure_time": "07:59",
+      "total_distance_km": 9.8,
+      "total_duration_minutes": 31,
+      "avg_load_factor": 0.347,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BE-S06", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BE-S07", "sequence": 2, "arrival_offset_minutes": 6},
+        {"stop_id": "BE-S08", "sequence": 3, "arrival_offset_minutes": 11},
+        {"stop_id": "BE-S09", "sequence": 4, "arrival_offset_minutes": 16},
+        {"stop_id": "BE-S10", "sequence": 5, "arrival_offset_minutes": 20}
+      ]
+    },
+    {
+      "route_id": "BE-R3",
+      "name": "Central Express",
+      "color": "#2A9D8F",
+      "bus_capacity": 72,
+      "departure_time": "08:06",
+      "total_distance_km": 8.1,
+      "total_duration_minutes": 24,
+      "avg_load_factor": 0.667,
+      "merged_from": null,
+      "stops": [
+        {"stop_id": "BE-S17", "sequence": 1, "arrival_offset_minutes": 0},
+        {"stop_id": "BE-S16", "sequence": 2, "arrival_offset_minutes": 3},
+        {"stop_id": "BE-S15", "sequence": 3, "arrival_offset_minutes": 6},
+        {"stop_id": "BE-S14", "sequence": 4, "arrival_offset_minutes": 9},
+        {"stop_id": "BE-S13", "sequence": 5, "arrival_offset_minutes": 12},
+        {"stop_id": "BE-S12", "sequence": 6, "arrival_offset_minutes": 15},
+        {"stop_id": "BE-S11", "sequence": 7, "arrival_offset_minutes": 18}
+      ]
+    }
+  ],
+
+  "optimized_scenario": {
+    "eliminated_routes": ["BE-R2"],
+    "total_distance_km": 24.1,
+    "total_duration_minutes": 74,
+    "routes": [
+      {
+        "route_id": "BE-R1-OPT",
+        "name": "North-West Combined",
+        "color": "#E63946",
+        "bus_capacity": 72,
+        "departure_time": "07:39",
+        "total_distance_km": 16.2,
+        "total_duration_minutes": 51,
+        "avg_load_factor": 0.764,
+        "merged_from": ["BE-R2", "BE-R1"],
+        "stops": [
+          {"stop_id": "BE-S06", "sequence": 1,  "arrival_offset_minutes": 0},
+          {"stop_id": "BE-S07", "sequence": 2,  "arrival_offset_minutes": 6},
+          {"stop_id": "BE-S08", "sequence": 3,  "arrival_offset_minutes": 11},
+          {"stop_id": "BE-S09", "sequence": 4,  "arrival_offset_minutes": 16},
+          {"stop_id": "BE-S10", "sequence": 5,  "arrival_offset_minutes": 21},
+          {"stop_id": "BE-S01", "sequence": 6,  "arrival_offset_minutes": 28},
+          {"stop_id": "BE-S02", "sequence": 7,  "arrival_offset_minutes": 33},
+          {"stop_id": "BE-S03", "sequence": 8,  "arrival_offset_minutes": 38},
+          {"stop_id": "BE-S04", "sequence": 9,  "arrival_offset_minutes": 43},
+          {"stop_id": "BE-S05", "sequence": 10, "arrival_offset_minutes": 47}
+        ]
+      },
+      {
+        "route_id": "BE-R3-OPT",
+        "name": "Central Express",
+        "color": "#2A9D8F",
+        "bus_capacity": 72,
+        "departure_time": "08:07",
+        "total_distance_km": 7.9,
+        "total_duration_minutes": 23,
+        "avg_load_factor": 0.667,
+        "merged_from": null,
+        "stops": [
+          {"stop_id": "BE-S17", "sequence": 1, "arrival_offset_minutes": 0},
+          {"stop_id": "BE-S16", "sequence": 2, "arrival_offset_minutes": 3},
+          {"stop_id": "BE-S15", "sequence": 3, "arrival_offset_minutes": 6},
+          {"stop_id": "BE-S14", "sequence": 4, "arrival_offset_minutes": 9},
+          {"stop_id": "BE-S13", "sequence": 5, "arrival_offset_minutes": 12},
+          {"stop_id": "BE-S12", "sequence": 6, "arrival_offset_minutes": 14},
+          {"stop_id": "BE-S11", "sequence": 7, "arrival_offset_minutes": 17}
+        ]
+      }
+    ]
+  },
+
+  "traffic_context": {
+    "peak_window": "07:00–08:30",
+    "zones": {
+      "Z1": {"congestion_level": "medium", "peak_delay_minutes": 4.5},
+      "Z2": {"congestion_level": "low",    "peak_delay_minutes": 1.8},
+      "Z3": {"congestion_level": "high",   "peak_delay_minutes": 7.2}
+    },
+    "notes": "NE 8th St corridor (Z3) experiences heavy I-405 spillover congestion on weekday mornings. Z2 (Medina) is largely residential with minimal delay."
+  },
+
+  "demand_context": {
+    "total_enrolled": 218,
+    "bus_eligible_pct": 0.472,
+    "total_estimated_riders": 103,
+    "zones": {
+      "Z1": {"estimated_students": 30, "current_capacity": 72},
+      "Z2": {"estimated_students": 25, "current_capacity": 72},
+      "Z3": {"estimated_students": 48, "current_capacity": 72}
+    },
+    "notes": "Z1 and Z2 are significantly underutilized relative to their allocated bus capacity. Z3 is efficiently loaded but Z1 and Z2 together could be consolidated into a single route."
+  }
+}
