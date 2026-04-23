@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import {
   APIProvider,
   InfoWindow,
-  Map,
+  Map as GoogleMap,
   Marker,
   useMap,
   useMapsLibrary,
@@ -74,16 +74,16 @@ function BoundsFitter({
   schoolLng: number
 }) {
   const map = useMap()
-  const mapsLib = useMapsLibrary('maps')
+  const coreLib = useMapsLibrary('core')
 
   useEffect(() => {
-    if (!map || !mapsLib || !allStops.length) return
-    const bounds = new mapsLib.LatLngBounds()
+    if (!map || !coreLib || !allStops.length) return
+    const bounds = new coreLib.LatLngBounds()
     allStops.forEach((s) => bounds.extend({ lat: s.lat, lng: s.lng }))
     bounds.extend({ lat: schoolLat, lng: schoolLng })
     map.fitBounds(bounds, { top: 60, bottom: 60, left: 60, right: 60 })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, mapsLib, datasetId]) // re-fit only when dataset changes
+  }, [map, coreLib, datasetId]) // re-fit only when dataset changes
 
   return null
 }
@@ -254,7 +254,7 @@ export default function GoogleMapView({
   return (
     <div className="relative h-full w-full">
       <APIProvider apiKey={apiKey}>
-        <Map
+        <GoogleMap
           key={dataset.dataset_id}
           style={{ width: '100%', height: '100%' }}
           defaultCenter={{ lat: dataset.school_lat, lng: dataset.school_lng }}
@@ -288,7 +288,7 @@ export default function GoogleMapView({
             lng={dataset.school_lng}
             name={dataset.school_name}
           />
-        </Map>
+        </GoogleMap>
       </APIProvider>
 
       <Legend routes={activeRoutes} />
