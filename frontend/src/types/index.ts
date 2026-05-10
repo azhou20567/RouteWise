@@ -4,6 +4,11 @@ export interface RouteStop {
   arrival_offset_minutes: number
 }
 
+export interface RoutePathPoint {
+  lat: number
+  lng: number
+}
+
 export interface Route {
   route_id: string
   name: string
@@ -15,6 +20,7 @@ export interface Route {
   total_duration_minutes: number
   avg_load_factor: number
   merged_from: string[] | null
+  path?: RoutePathPoint[] | null
 }
 
 export interface Stop {
@@ -48,6 +54,10 @@ export interface Dataset {
   school_level: string
   school_lat: number
   school_lng: number
+  source_name?: string | null
+  source_url?: string | null
+  source_version?: string | null
+  source_notes?: string | null
   stops: Stop[]
   zones: Zone[]
   routes: Route[]
