@@ -34,14 +34,19 @@ function RoutePolylines({
     const stopIndex = new Map(allStops.map((s) => [s.stop_id, s]))
 
     const polylines = routes.map((route) => {
-      const path = [...route.stops]
-        .sort((a, b) => a.sequence - b.sequence)
-        .flatMap((rs) => {
-          const stop = stopIndex.get(rs.stop_id)
-          return stop ? [{ lat: stop.lat, lng: stop.lng }] : []
-        })
-      // Draw a dashed leg from last stop to school
-      path.push({ lat: schoolLat, lng: schoolLng })
+      const path =
+        route.path && route.path.length >= 2
+          ? route.path
+          : [...route.stops]
+              .sort((a, b) => a.sequence - b.sequence)
+              .flatMap((rs) => {
+                const stop = stopIndex.get(rs.stop_id)
+                return stop ? [{ lat: stop.lat, lng: stop.lng }] : []
+              })
+
+      if (!route.path || route.path.length < 2) {
+        path.push({ lat: schoolLat, lng: schoolLng })
+      }
 
       return new mapsLib.Polyline({
         path,
