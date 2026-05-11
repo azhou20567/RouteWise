@@ -1,0 +1,243 @@
+# Clyde Hill Elementary — Bellevue School District
+#
+# Stops verified against BSD's 2025-26 transportation PDF (regenerated
+# 2025-09-26). The school's address was corrected to 9601 NE 24th St;
+# the demo had previously assumed 9601 NE 32nd St.
+
+dataset_id: bellevue_elementary
+name: Clyde Hill Elementary
+school_name: Clyde Hill Elementary
+school_level: elementary
+school_address: "9601 NE 24th St, Bellevue, WA 98004"
+# school_lat / school_lng intentionally omitted — the build script geocodes
+# the address to exercise the Geocoding-API path.
+
+stop_id_prefix: "BE-S"
+route_id_prefix: "BE-R"
+
+# Provenance — surfaced into Dataset.source_* by the build script
+source_name: "Bellevue School District 2025-26 Clyde Hill route PDF"
+source_url: "https://resources.finalsite.net/images/v1758907570/bsd405org/yaeolbw5uxdyhyzaulba/CLYDEHILLSTOPS1.pdf"
+source_version: "2025-26 school year, generated 2025-09-26"
+source_notes: >
+  All 18 stops are verified against BSD's public 2025-26 Clyde Hill stops
+  PDF (BSD routes #09, #10, #11, #12). Lat/lng are geocoded from the
+  intersection names — BSD does not publish coordinates. ACS tract IDs
+  and child counts are demo-realistic estimates anchored on Bellevue
+  census tract sizes (~300 children aged 5-11 per tract); replace with
+  ACS API output if integrating against the live Census API.
+
+# Optimization parameters
+bus_capacity: 72
+max_vehicles: 4
+departure_window: "07:30-08:15"
+peak_window_label: "07:00-09:00"
+
+# Zones — four catchment buckets matching BSD's four Clyde Hill routes,
+# but kept geographic (not route-based) so the VRP solver is free to
+# reassign stops. Polygons are rough rectangles, not legal boundaries.
+zones:
+  - zone_id: Z1
+    name: "Yarrow Point / Hunts Point"
+    polygon:
+      - [47.660, -122.250]
+      - [47.660, -122.215]
+      - [47.625, -122.215]
+      - [47.625, -122.250]
+    peak_demand_multiplier: 0.95
+
+  - zone_id: Z2
+    name: "Downtown Bellevue / Bel-Red"
+    polygon:
+      - [47.625, -122.215]
+      - [47.625, -122.180]
+      - [47.598, -122.180]
+      - [47.598, -122.215]
+    peak_demand_multiplier: 1.10
+
+  - zone_id: Z3
+    name: "Central Clyde Hill"
+    polygon:
+      - [47.640, -122.215]
+      - [47.640, -122.195]
+      - [47.620, -122.195]
+      - [47.620, -122.215]
+    peak_demand_multiplier: 1.00
+
+  - zone_id: Z4
+    name: "East Bel-Red / Bridle Trails edge"
+    polygon:
+      - [47.640, -122.180]
+      - [47.640, -122.150]
+      - [47.610, -122.150]
+      - [47.610, -122.180]
+    peak_demand_multiplier: 0.85
+
+traffic_context:
+  notes: >
+    Morning peak modeled for school start. Downtown Bellevue (Z2) sees the
+    heaviest school-zone congestion; the Yarrow Point peninsula (Z1) is
+    quiet but constrained by limited bridge access.
+  zones:
+    Z1: { congestion_level: "low",    peak_delay_minutes: 1.5 }
+    Z2: { congestion_level: "high",   peak_delay_minutes: 5.5 }
+    Z3: { congestion_level: "medium", peak_delay_minutes: 3.0 }
+    Z4: { congestion_level: "medium", peak_delay_minutes: 3.5 }
+
+demand_context:
+  total_enrolled: 470
+  bus_eligible_pct: 0.62
+  notes: >
+    Enrollment from OSPI 2024-25 report card for Clyde Hill ES; bus
+    eligibility is the BSD default 1-mile / 1.5-mile rule applied across
+    the catchment.
+
+# Stops — verified intersections from BSD 2025-26 PDF.
+stops:
+  # ----- Route #09: Yarrow Point / Hunts Point / west Clyde Hill -----
+  - name: "92nd Ave NE & NE 47th St"
+    zone_id: Z1
+    riders_acs_tract: "53033023801"
+    riders_tract_children: 285
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Yarrow Point neighborhood, AM 08:35"
+
+  - name: "92nd Ave NE & Points Dr"
+    zone_id: Z1
+    riders_acs_tract: "53033023801"
+    riders_tract_children: 285
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Yarrow Point / Points Loop"
+
+  - name: "Hunts Point Rd & Hunts Point Cir"
+    zone_id: Z1
+    riders_acs_tract: "53033023802"
+    riders_tract_children: 240
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Hunts Point peninsula"
+
+  - name: "Hunts Point Cir & 84th Ave NE"
+    zone_id: Z1
+    riders_acs_tract: "53033023802"
+    riders_tract_children: 240
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Hunts Point peninsula"
+
+  - name: "Bellevue Way NE & NE 28th Pl"
+    zone_id: Z3
+    riders_acs_tract: "53033024001"
+    riders_tract_children: 310
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Bridle Trails edge / west Clyde Hill"
+
+  - name: "NE 28th St & 85th Pl NE"
+    zone_id: Z1
+    riders_acs_tract: "53033023801"
+    riders_tract_children: 285
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Yarrow Point edge"
+
+  - name: "NE 40th St & 94th Ave NE"
+    zone_id: Z1
+    riders_acs_tract: "53033023801"
+    riders_tract_children: 285
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "West Clyde Hill"
+
+  - name: "Bellevue Way NE & 103rd Ave NE"
+    zone_id: Z3
+    riders_acs_tract: "53033024001"
+    riders_tract_children: 310
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #09"
+    confidence: verified
+    notes: "Near downtown Bellevue edge"
+
+  # ----- Route #10: downtown Bellevue / Bel-Red -----
+  - name: "Bellevue Way NE & NE 12th Pl"
+    zone_id: Z2
+    riders_acs_tract: "53033024002"
+    riders_tract_children: 340
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #10"
+    confidence: verified
+    notes: "Downtown Bellevue"
+
+  - name: "Bellevue Way NE & NE 17th St"
+    zone_id: Z2
+    riders_acs_tract: "53033024002"
+    riders_tract_children: 340
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #10"
+    confidence: verified
+    notes: "Downtown Bellevue"
+
+  - name: "Bellevue Way NE & NE 14th St"
+    zone_id: Z2
+    riders_acs_tract: "53033024002"
+    riders_tract_children: 340
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #10"
+    confidence: verified
+    notes: "The Park apartments landmark"
+
+  - name: "NE 8th St & 126th Pl NE"
+    zone_id: Z4
+    riders_acs_tract: "53033024003"
+    riders_tract_children: 290
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #10"
+    confidence: verified
+    notes: "East of downtown Bellevue"
+
+  - name: "NE 10th Pl & 124th Ct NE"
+    zone_id: Z4
+    riders_acs_tract: "53033024003"
+    riders_tract_children: 290
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #10"
+    confidence: verified
+    notes: "Condo at 10th Pl"
+
+  # ----- Route #12: 108th Ave NE corridor / central Clyde Hill -----
+  - name: "108th Ave NE & NE 16th St"
+    zone_id: Z3
+    riders_acs_tract: "53033024001"
+    riders_tract_children: 310
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #12"
+    confidence: verified
+    notes: "Central Clyde Hill / downtown edge"
+
+  - name: "NE 24th St & 108th Ave NE"
+    zone_id: Z3
+    riders_acs_tract: "53033024001"
+    riders_tract_children: 310
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #12"
+    confidence: verified
+    notes: "Close to school"
+
+  - name: "NE 10th St & 110th Ave NE"
+    zone_id: Z2
+    riders_acs_tract: "53033024002"
+    riders_tract_children: 340
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #12"
+    confidence: verified
+    notes: "Downtown Bellevue"
+
+  # ----- Route #11: east Bel-Red / 132nd corridor -----
+  - name: "132nd Ave NE & NE 12th Ct"
+    zone_id: Z4
+    riders_acs_tract: "53033024003"
+    riders_tract_children: 290
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #11"
+    confidence: verified
+    notes: "Eastern catchment edge"
+
+  - name: "108th Ave NE & NE 12th St"
+    zone_id: Z2
+    riders_acs_tract: "53033024002"
+    riders_tract_children: 340
+    source: "BSD 2025-26 Clyde Hill stops PDF, route #11"
+    confidence: verified
+    notes: "Downtown Bellevue / final pickup before school"

@@ -10,8 +10,10 @@ RouteWise is a school bus route optimization MVP. It analyzes route inefficienci
 
 - **Python 3.11+** for the backend
 - **Node.js 20+** for the frontend — download from https://nodejs.org
-- **Google Maps API key** — enable "Maps JavaScript API" at https://console.cloud.google.com
-- **Anthropic API key** — optional; falls back to static recommendations without it
+- **Google Maps API keys** — two keys, one browser-side and one backend-side:
+  - **Browser key** (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`) — needs **Maps JavaScript API**; restrict by HTTP referrer
+  - **Backend key** (`GOOGLE_MAPS_BACKEND_API_KEY`) — only required for the BSD build script and the MCP geocode/validate tools; needs **Directions**, **Distance Matrix**, **Roads**, and **Geocoding** APIs; restrict by server IP
+- **Anthropic API key** — optional; falls back to the heuristic recommender without it
 
 ## Running the Project
 
@@ -46,7 +48,7 @@ python mcp_server.py   # stdio transport — register in Claude Desktop / Claude
 
 ### Demo flow
 1. Open http://localhost:3000
-2. Select "Clyde Hill Elementary" or "Newport Middle School"
+2. Select "Clyde Hill Elementary", "Tyee Middle School", or the King County Metro sample
 3. Toggle **Current ↔ Optimized** to compare route maps
 4. Click **Generate AI Analysis** for the LLM recommendation + explanation
 
@@ -63,25 +65,54 @@ The "after" route geometry is **pre-computed in the dataset JSON**, not generate
 
 ### Backend Layer Map
 ```
-app/data/loader.py          — loads + caches JSON datasets at startup
-app/models/                 — Pydantic v2 schemas (dataset, metrics, recommendation, tool_outputs)
-app/tools/                  — the 4 core functions (same code used by FastAPI + MCP + LLM dispatcher)
-app/services/llm_service.py — Claude agentic loop with tool_use; dispatches to app/tools/
-app/services/metrics_service.py — pure math: compute_before/after/delta
-app/routers/                — FastAPI endpoints
-mcp_server.py               — FastMCP wrapper around the same app/tools/ functions
+app/data/loader.py                       — loads + caches JSON datasets at startup
+app/models/dataset.py                    — Pydantic Dataset + projection methods (route_summary,
+                                            traffic_snapshot, demand_estimate) shared across LLM/MCP/HTTP
+app/models/{metrics,recommendation,…}.py — other Pydantic schemas
+app/tools/                               — 3 one-line forwarders around Dataset projections
+app/services/llm_service.py              — Claude agentic loop with tool_use
+app/services/metrics_service.py          — pure math: compute_before/after/delta
+app/services/heuristic_recommender.py    — LLM-free RouteRecommendation generator (fallback)
+app/services/google_maps_service.py      — build-time only: Geocode/Directions/Roads/DistanceMatrix
+                                            wrapper with on-disk caching at backend/.cache/maps/
+app/services/route_validator.py          — gap check + Roads-API on-road sampling
+app/optimization/vrp_solver.py           — OR-Tools CVRP (lex-min buses, then distance)
+app/routers/                             — FastAPI endpoints
+scripts/build_bsd_dataset.py             — build-time pipeline: YAML → snap → VRP → snap → validate → JSON
+scripts/build_king_county_metro_dataset.py — build-time pipeline for the KC Metro GTFS dataset
+scripts/stops/<school>.yml               — hand-curated candidate stops + provenance
+mcp_server.py                            — FastMCP server; exposes the 3 tools + geocode + validate
 ```
 
-### The 4 Tools (shared across all call paths)
-| Tool | File | Called by |
+The build-time pipeline (`scripts/build_bsd_dataset.py`) and the runtime API
+do not share a Python dependency graph: the server never imports
+`googlemaps` or `ortools`. Build output is committed JSON.
+
+### The 3 Data-Gathering Tools (shared across all call paths)
+| Tool | Implemented by | Called by |
 |---|---|---|
-| `get_route_summary(dataset_id, route_id)` | `tools/route_summary.py` | FastAPI, MCP, LLM loop |
-| `get_traffic_snapshot(dataset_id)` | `tools/traffic_snapshot.py` | FastAPI, MCP, LLM loop |
-| `get_demand_estimate(dataset_id)` | `tools/demand_estimate.py` | FastAPI, MCP, LLM loop |
-| `generate_route_recommendation(dataset_id)` | `tools/route_recommendation.py` | FastAPI, MCP (triggers LLM loop internally) |
+| `get_route_summary(dataset_id, route_id)` | `Dataset.route_summary` projection | FastAPI, MCP, LLM loop |
+| `get_traffic_snapshot(dataset_id)` | `Dataset.traffic_snapshot` projection | FastAPI, MCP, LLM loop |
+| `get_demand_estimate(dataset_id)` | `Dataset.demand_estimate` projection | FastAPI, MCP, LLM loop |
+
+The files in `app/tools/` are one-line forwarders that exist purely to give
+each tool a stable import path. The single source of truth for each
+projection's shape is the matching method on `Dataset`.
+
+### MCP-only tools (Roads-API quality checks)
+| Tool | Purpose |
+|---|---|
+| `geocode_address(address)` | Address/place name → lat/lng + formatted_address |
+| `validate_route_geometry(dataset_id, route_id)` | Sample route polyline every 50 m; assert ≥99% within 15 m of a road |
 
 ### LLM Loop (`services/llm_service.py`)
-Claude is given 3 data-gathering tools + 1 exit tool (`generate_route_recommendation`). When Claude calls the exit tool, its `input` becomes the `RouteRecommendation` Pydantic model. Falls back to a static recommendation if `ANTHROPIC_API_KEY` is not set.
+Claude is given 3 data-gathering tools + 1 internal exit sentinel
+(`generate_route_recommendation`). The sentinel's schema is declared in
+`LLM_TOOLS` and recognised at the loop's exit check; it is intentionally
+**not** exposed via FastAPI or MCP. When Claude calls it, its `input` becomes
+the `RouteRecommendation`. If `ANTHROPIC_API_KEY` is unset, the loop is
+skipped and `services/heuristic_recommender.recommend()` produces the same
+shape from a Dataset + ScenarioMetrics.
 
 ### Frontend
 ```
@@ -97,9 +128,9 @@ Map bounds auto-fit to the visible stops. ScenarioToggle switches `App.scenario`
 ## Dataset Structure
 
 Datasets at `backend/app/data/datasets/`:
-- `bellevue_elementary.json` — Clyde Hill Elementary, 3→2 routes, 17 stops
-- `bellevue_middle.json` — Newport Middle School, 4→3 routes, 18 stops
-- `king_county_metro_bellevue.json` — real King County Metro GTFS-derived Bellevue sample, 7→6 routes, 77 stops
+- `bellevue_elementary.json` — Clyde Hill Elementary, built from real BSD 2025-26 stops via `scripts/build_bsd_dataset.py`. Run the build script to populate; the file in-repo may still be the synthetic demo until the first build.
+- `bellevue_middle.json` — **Tyee Middle School** (BSD has no "Newport Middle School"; Tyee serves the Newport-area catchment). Built from real BSD 2025-26 stops via `scripts/build_bsd_dataset.py`.
+- `king_county_metro_bellevue.json` — real King County Metro GTFS-derived Bellevue sample, 7→6 routes, 77 stops, built via `scripts/build_king_county_metro_dataset.py`.
 
 Each dataset contains `routes` (before), `optimized_scenario.routes` (after), `stops` (shared stop pool with lat/lng), `zones`, `traffic_context`, and `demand_context`. Route stops reference `stop_id`s from the flat `stops` array.
 
@@ -110,11 +141,45 @@ The King County Metro sample is generated by `backend/scripts/build_king_county_
 - `co2_per_km_kg = 0.89` — CO₂ emissions per km
 - `annual_bus_operating_cost_usd = 85_000` — per bus per year (drives annual savings calc)
 - `school_days_per_year = 180`, `daily_trips = 2`
+- `load_factor_underutilized = 0.50` / `load_factor_good = 0.70` — load-factor policy shared by the heuristic recommender and the LLM system prompt
 
 ## Environment Variables
 | Variable | Where used |
 |---|---|
 | `ANTHROPIC_API_KEY` | Backend — LLM calls |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Frontend — Google Maps rendering |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Frontend — Google Maps rendering (Maps JS API only) |
+| `GOOGLE_MAPS_BACKEND_API_KEY` | Backend — BSD build script + MCP geocode/validate (Directions + Distance Matrix + Roads + Geocoding APIs) |
 
-Required Google Maps API: **Maps JavaScript API** (enable in Google Cloud Console).
+Required Google Maps APIs:
+- Frontend key: **Maps JavaScript API**, restricted by HTTP referrer
+- Backend key: **Directions**, **Distance Matrix**, **Roads**, **Geocoding**; restricted by server IP
+
+## Building Datasets
+
+### BSD pipeline (`scripts/build_bsd_dataset.py`)
+
+```bash
+cd backend
+python scripts/build_bsd_dataset.py scripts/stops/clyde_hill_elementary.yml
+```
+
+Reads a hand-curated candidate-stops YAML (see `scripts/stops/README.md`), 
+snaps each stop to the nearest road, computes ACS × zone-weighted ridership,
+builds a "before" baseline by zone-naive partition, runs OR-Tools CVRP for
+the "after" scenario (lex-min buses, then distance), snaps every route to
+roads via the Directions API, validates every polyline via Roads API
+(≥99% of samples within 15 m of an actual road), and writes the dataset
+JSON. Every external response is cached at `backend/.cache/maps/` so
+re-runs cost zero quota.
+
+### King County Metro GTFS pipeline (`scripts/build_king_county_metro_dataset.py`)
+
+```bash
+cd backend
+python scripts/build_king_county_metro_dataset.py
+```
+
+Downloads the KC Metro GTFS static feed (cached at
+`backend/app/data/raw/king_county_metro_gtfs.zip`) and builds a Bellevue
+sample from real route shapes + scheduled stop times. No Google Maps key
+needed — GTFS shapes are already road-aligned.
