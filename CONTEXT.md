@@ -74,6 +74,47 @@ files are one-line forwarders around the corresponding Dataset projection;
 they exist to give each tool a stable import path that the LLM, MCP, and
 FastAPI adapters all use.
 
+**Candidate-stops YAML** — `backend/scripts/stops/<school_slug>.yml`. The
+single hand-curated input for the BSD dataset build script. Captures the
+school's identity, zone polygons, candidate stops (with provenance — see
+"rich provenance schema" below), traffic context, and demand context. The
+build script computes everything else (snapped coordinates, ridership,
+route assignments, road-snapped polylines, validation). See
+`scripts/stops/README.md` for the full schema.
+
+**Rich provenance schema** — Per-stop fields beyond lat/lng/name/zone:
+`source` (URL or document reference), `confidence` (`"verified"` /
+`"approximate"` / `"interpolated"`), `notes`, plus the ACS fields used to
+derive ridership (`riders_acs_tract`, `riders_tract_children`). Documents
+what each number is grounded in so spot-checking is a two-second skim.
+
+**Build pipeline** — Two scripts that produce committed Dataset JSONs from
+real-world data:
+  - `scripts/build_bsd_dataset.py` — Bellevue School District path: YAML →
+    geocode → snap stops → ACS ridership → distance matrix → OR-Tools CVRP
+    (lex-min buses, then distance) → Directions API road-snap → Roads API
+    validation → write JSON.
+  - `scripts/build_king_county_metro_dataset.py` — GTFS path: download
+    feed → pick Bellevue-area trips → use GTFS `shapes.txt` directly as
+    road geometry (no Google Maps calls) → hand-coded optimized scenario →
+    write JSON.
+
+**On-road validation** — Two strictness levels in
+`app/services/route_validator.py`:
+  - **Gap check** (pure-Python): asserts no consecutive segment in a path
+    is longer than a threshold. Catches straight-line connectors between
+    unrelated road shapes. Used by the GTFS build script inline.
+  - **Roads-API on-road sampling**: samples the polyline every 50 m and
+    asserts ≥99% of samples sit within 15 m of an actual road. Catches
+    polylines that cut through parking lots, water, or private land. Used
+    by the BSD build script and exposed via MCP as
+    `validate_route_geometry`.
+
+**Maps service cache** — Every Google Maps response is hashed to
+`backend/.cache/maps/<namespace>-<sha>.json`. Manual invalidation only —
+delete the file or directory. Lets the build script iterate without
+re-billing quota.
+
 ---
 
 ## Test surface

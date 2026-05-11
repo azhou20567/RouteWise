@@ -6,3 +6,9 @@ anthropic==0.40.0
 mcp==1.2.0
 python-dotenv==1.0.1
 httpx==0.28.1
+
+# Real-data pipeline (build-time only — runtime serves cached dataset JSONs)
+googlemaps==4.10.0
+ortools==9.11.4210
+polyline==2.0.2
+PyYAML==6.0.2

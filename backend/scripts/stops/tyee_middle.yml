@@ -1,0 +1,254 @@
+# Tyee Middle School — Bellevue School District
+#
+# The demo originally referenced "Newport Middle School" but no school by
+# that name exists in BSD. Tyee Middle School is the BSD middle school
+# serving the Newport area catchment (Somerset, Newport Hills, Coal Creek,
+# Eastgate, Newport Shores). Stops verified against BSD's 2025-26 Tyee
+# routes PDF (regenerated 2025-09-26).
+
+dataset_id: bellevue_middle
+name: Tyee Middle School
+school_name: Tyee Middle School
+school_level: middle
+school_address: "13630 SE Allen Rd, Bellevue, WA 98006"
+# school_lat / school_lng omitted — the build script geocodes.
+
+stop_id_prefix: "BM-S"
+route_id_prefix: "BM-R"
+
+source_name: "Bellevue School District 2025-26 Tyee route PDF"
+source_url: "https://resources.finalsite.net/images/v1758907001/bsd405org/y55o3s5unq96tytrq9a3/TYEE.pdf"
+source_version: "2025-26 school year, generated 2025-09-26"
+source_notes: >
+  All 20 stops are verified against BSD's public 2025-26 Tyee routes PDF
+  (BSD routes #32, #34, #39, #40, #41, #48). Lat/lng are geocoded from
+  intersection names — BSD does not publish coordinates. The dataset
+  previously labeled "Newport Middle School" has been corrected to Tyee
+  Middle, which is the actual BSD middle school for this catchment.
+
+bus_capacity: 78
+max_vehicles: 5
+departure_window: "07:30-08:30"
+peak_window_label: "07:00-09:00"
+
+zones:
+  - zone_id: Z1
+    name: "Newport Shores / Factoria"
+    polygon:
+      - [47.585, -122.215]
+      - [47.585, -122.175]
+      - [47.560, -122.175]
+      - [47.560, -122.215]
+    peak_demand_multiplier: 0.95
+
+  - zone_id: Z2
+    name: "Newport Hills / Enatai"
+    polygon:
+      - [47.580, -122.215]
+      - [47.580, -122.175]
+      - [47.545, -122.175]
+      - [47.545, -122.215]
+    peak_demand_multiplier: 1.05
+
+  - zone_id: Z3
+    name: "Somerset"
+    polygon:
+      - [47.570, -122.175]
+      - [47.570, -122.140]
+      - [47.540, -122.140]
+      - [47.540, -122.175]
+    peak_demand_multiplier: 1.15
+
+  - zone_id: Z4
+    name: "Eastgate / Lakemont"
+    polygon:
+      - [47.585, -122.150]
+      - [47.585, -122.105]
+      - [47.550, -122.105]
+      - [47.550, -122.150]
+    peak_demand_multiplier: 0.90
+
+traffic_context:
+  notes: >
+    Somerset and Lakemont neighborhoods sit on steep grades that slow buses
+    in winter. The I-90 / Lakemont Blvd interchange (Z4) and Factoria
+    Blvd (Z1) are the morning peak chokepoints.
+  zones:
+    Z1: { congestion_level: "high",   peak_delay_minutes: 5.5 }
+    Z2: { congestion_level: "medium", peak_delay_minutes: 3.0 }
+    Z3: { congestion_level: "medium", peak_delay_minutes: 3.5 }
+    Z4: { congestion_level: "high",   peak_delay_minutes: 6.0 }
+
+demand_context:
+  total_enrolled: 880
+  bus_eligible_pct: 0.58
+  notes: >
+    Enrollment from OSPI 2024-25 report card for Tyee MS. Bus eligibility
+    is the BSD 1.5-mile rule applied across the Newport-area catchment.
+
+stops:
+  # ----- Route #32: Newport Shores / Factoria / Lake Washington Blvd -----
+  - name: "Lake Washington Blvd & 120th Ave SE"
+    zone_id: Z1
+    riders_acs_tract: "53033025202"
+    riders_tract_children: 295
+    source: "BSD 2025-26 Tyee stops PDF, route #32"
+    confidence: verified
+    notes: "Newport Shores area, AM 08:03"
+
+  - name: "Newport Shores Dr SE & Lake Washington Blvd"
+    zone_id: Z1
+    riders_acs_tract: "53033025202"
+    riders_tract_children: 295
+    source: "BSD 2025-26 Tyee stops PDF, route #32"
+    confidence: verified
+    notes: "Newport Shores neighborhood entry"
+
+  - name: "123rd Ave SE & SE 43rd St"
+    zone_id: Z2
+    riders_acs_tract: "53033025301"
+    riders_tract_children: 320
+    source: "BSD 2025-26 Tyee stops PDF, route #32"
+    confidence: verified
+    notes: "Newport Hills"
+
+  - name: "Factoria Blvd SE & SE 38th St"
+    zone_id: Z1
+    riders_acs_tract: "53033025202"
+    riders_tract_children: 295
+    source: "BSD 2025-26 Tyee stops PDF, route #32"
+    confidence: verified
+    notes: "Factoria landmark stop (Taco Time)"
+
+  # ----- Route #39: Enatai / Lake Washington Blvd / Newport Hills west -----
+  - name: "SE 48th St & 118th Ave SE"
+    zone_id: Z2
+    riders_acs_tract: "53033025301"
+    riders_tract_children: 320
+    source: "BSD 2025-26 Tyee stops PDF, route #39"
+    confidence: verified
+    notes: "Newport Hills"
+
+  - name: "SE 60th St & 118th Ave SE"
+    zone_id: Z2
+    riders_acs_tract: "53033025301"
+    riders_tract_children: 320
+    source: "BSD 2025-26 Tyee stops PDF, route #39"
+    confidence: verified
+    notes: "Newport Hills"
+
+  - name: "Lake Washington Blvd SE & 106th Ave SE"
+    zone_id: Z2
+    riders_acs_tract: "53033025301"
+    riders_tract_children: 320
+    source: "BSD 2025-26 Tyee stops PDF, route #39"
+    confidence: verified
+    notes: "Enatai / Beaux Arts edge"
+
+  - name: "SE 52nd St & 117th Ave SE"
+    zone_id: Z2
+    riders_acs_tract: "53033025301"
+    riders_tract_children: 320
+    source: "BSD 2025-26 Tyee stops PDF, route #39"
+    confidence: verified
+    notes: "Newport Hills"
+
+  # ----- Route #34: Somerset / Lake Washington Blvd south -----
+  - name: "Somerset Dr SE & SE 53rd St"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #34"
+    confidence: verified
+    notes: "Somerset neighborhood"
+
+  - name: "129th Ave SE & SE 63rd St"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #34"
+    confidence: verified
+    notes: "Somerset"
+
+  - name: "SE 66th St & 129th Pl SE"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #34"
+    confidence: verified
+    notes: "Upper Somerset"
+
+  - name: "Lake Washington Blvd SE & SE 59th St"
+    zone_id: Z2
+    riders_acs_tract: "53033025301"
+    riders_tract_children: 320
+    source: "BSD 2025-26 Tyee stops PDF, route #34"
+    confidence: verified
+    notes: "First stop of AM run"
+
+  # ----- Route #40: Somerset Blvd / Highland / 148th -----
+  - name: "Somerset Blvd SE & Highland Dr"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #40"
+    confidence: verified
+    notes: "Somerset Park transit area"
+
+  - name: "148th Ave SE & SE 46th St"
+    zone_id: Z4
+    riders_acs_tract: "53033025203"
+    riders_tract_children: 305
+    source: "BSD 2025-26 Tyee stops PDF, route #40"
+    confidence: verified
+    notes: "Eastgate edge"
+
+  - name: "Highland Dr & 147th Pl SE"
+    zone_id: Z4
+    riders_acs_tract: "53033025203"
+    riders_tract_children: 305
+    source: "BSD 2025-26 Tyee stops PDF, route #40"
+    confidence: verified
+    notes: "Somerset / Eastgate"
+
+  # ----- Route #41: Forest Dr / east Somerset -----
+  - name: "Forest Dr SE & 138th Ave SE"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #41"
+    confidence: verified
+    notes: "Somerset / Horizon View area"
+
+  - name: "142nd Ave SE & SE 61st Pl"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #41"
+    confidence: verified
+    notes: "Somerset"
+
+  - name: "SE 60th St & 138th Pl SE"
+    zone_id: Z3
+    riders_acs_tract: "53033025303"
+    riders_tract_children: 360
+    source: "BSD 2025-26 Tyee stops PDF, route #41"
+    confidence: verified
+    notes: "Somerset"
+
+  # ----- Route #48: Eastgate / Lakemont edge -----
+  - name: "Newport Way & 156th Ave SE"
+    zone_id: Z4
+    riders_acs_tract: "53033025203"
+    riders_tract_children: 305
+    source: "BSD 2025-26 Tyee stops PDF, route #48"
+    confidence: verified
+    notes: "Crosswalk at Eastgate Elementary"
+
+  - name: "SE 63rd St & 155th Ave SE"
+    zone_id: Z4
+    riders_acs_tract: "53033025203"
+    riders_tract_children: 305
+    source: "BSD 2025-26 Tyee stops PDF, route #48"
+    confidence: verified
+    notes: "Lakemont / Cougar Mountain edge"

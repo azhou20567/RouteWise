@@ -6,6 +6,11 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     model_name: str = "claude-sonnet-4-6"
 
+    # Backend-only Google Maps key used by the BSD dataset build script and
+    # the MCP geocode / validate_route_geometry tools. Never exposed to the
+    # browser (the frontend has its own NEXT_PUBLIC_GOOGLE_MAPS_API_KEY).
+    google_maps_backend_api_key: str = ""
+
     # Cost/emissions constants
     cost_per_km_usd: float = 2.15
     co2_per_km_kg: float = 0.89
