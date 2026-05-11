@@ -1,18 +1,17 @@
 """
-Direct HTTP access to the 4 tools — used for testing and MCP inspection.
-The MCP server imports these same underlying functions directly.
+Direct HTTP access to the three data-gathering tools. The MCP server and the
+LLM agentic loop call the same underlying functions. The final RouteRecommendation
+is produced exclusively through POST /analysis/{id}/recommend — there is no
+HTTP entry point for the LLM exit sentinel `generate_route_recommendation`.
 """
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
 
 from app.models.tool_outputs import DemandEstimate, RouteSummary, TrafficSnapshot
-from app.models.recommendation import RouteRecommendation
 from app.tools.route_summary import get_route_summary
 from app.tools.traffic_snapshot import get_traffic_snapshot
 from app.tools.demand_estimate import get_demand_estimate
-from app.tools.route_recommendation import generate_route_recommendation
 
 router = APIRouter(prefix="/tools", tags=["tools"])
 
@@ -48,11 +47,3 @@ async def tool_demand_estimate(req: DatasetRequest):
         return await get_demand_estimate(req.dataset_id)
     except KeyError as e:
         raise HTTPException(status_code=404, detail=str(e))
-
-
-@router.post("/generate_route_recommendation", response_model=RouteRecommendation)
-async def tool_generate_recommendation(req: DatasetRequest):
-    try:
-        return await generate_route_recommendation(req.dataset_id)
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=str(e))

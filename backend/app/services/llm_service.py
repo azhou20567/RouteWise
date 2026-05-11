@@ -1,22 +1,31 @@
 """
 LLM agentic loop using Claude with tool_use for structured route analysis.
 
-Claude is given 3 data-gathering tools and 1 exit tool:
+Claude is given 3 data-gathering tools and 1 exit sentinel:
   get_route_summary       → call once per route
   get_traffic_snapshot    → call once
   get_demand_estimate     → call once
   generate_route_recommendation → FINAL call, terminates the loop
 
-When generate_route_recommendation is called, its input IS the structured
-RouteRecommendation that gets returned to the caller.
+`generate_route_recommendation` is an LLM-only sentinel — its schema is
+declared here and the loop recognises it as the exit. It is intentionally
+not exposed via the FastAPI tools router or the MCP server. When the LLM
+calls it, the `input` IS the structured RouteRecommendation returned to
+the caller.
+
+When ANTHROPIC_API_KEY is unset, the no-key path skips the loop entirely
+and delegates to app.services.heuristic_recommender — the same module a
+test would import to exercise the consolidation rule without a live API.
 """
 
 import logging
-from anthropic import AsyncAnthropic, APIStatusError
+from anthropic import AsyncAnthropic
 
 from app.config import settings
 from app.data.loader import get_dataset
-from app.models.recommendation import RouteRecommendation, RouteEdit, ExpectedImprovement
+from app.models.recommendation import RouteRecommendation
+from app.services import heuristic_recommender
+from app.services.metrics_service import compute_after, compute_before, compute_delta
 from app.tools.route_summary import get_route_summary
 from app.tools.traffic_snapshot import get_traffic_snapshot
 from app.tools.demand_estimate import get_demand_estimate
@@ -146,7 +155,9 @@ LLM_TOOLS = [
     },
 ]
 
-SYSTEM_PROMPT = """\
+_UNDERUTILIZED_PCT = int(round(settings.load_factor_underutilized * 100))
+
+SYSTEM_PROMPT = f"""\
 You are an expert school bus route optimization analyst for a school district in Bellevue, Washington.
 Your goal is to analyze the provided route data and generate specific, actionable recommendations
 to improve fleet utilization and reduce operating costs.
@@ -158,7 +169,7 @@ Workflow:
 4. Call generate_route_recommendation ONCE with your complete structured analysis.
 
 Analysis guidelines:
-- Routes below 50% load factor are strong candidates for consolidation or elimination.
+- Routes below {_UNDERUTILIZED_PCT}% load factor are strong candidates for consolidation or elimination.
 - When merging routes, verify the combined stop count can be served within a reasonable time window.
 - Traffic conditions affect feasibility of longer merged routes — factor in delay data.
 - All recommendations must maintain full coverage for every student currently served.
@@ -185,119 +196,23 @@ async def _dispatch(tool_name: str, tool_input: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Fallback (no API key configured)
-# ---------------------------------------------------------------------------
-
-def _fallback_recommendation(dataset_id: str) -> RouteRecommendation:
-    """
-    Returns a static recommendation derived directly from dataset metrics.
-    Used when ANTHROPIC_API_KEY is not configured — keeps the demo functional
-    without a live LLM call.
-    """
-    from app.services.metrics_service import compute_before, compute_after, compute_delta
-
-    dataset = get_dataset(dataset_id)
-    before = compute_before(dataset)
-    after = compute_after(dataset)
-    delta = compute_delta(before, after)
-
-    low_util = [m for m in before.route_metrics if m.load_factor < 0.5]
-    eliminated = dataset.optimized_scenario.eliminated_routes
-
-    inefficiencies = [
-        f"Route {m.route_id} operates at only {m.load_factor:.0%} capacity "
-        f"({m.estimated_riders}/{m.bus_capacity} seats filled)"
-        for m in low_util
-    ]
-    if delta.distance_saved_km > 0:
-        inefficiencies.append(
-            f"Current routing covers {before.total_distance_km:.1f} km/day; "
-            f"{delta.distance_saved_km:.1f} km can be eliminated through consolidation"
-        )
-
-    route_edits = []
-    for route_id in eliminated:
-        route_edits.append(RouteEdit(
-            action="eliminate",
-            affected_routes=[route_id],
-            rationale=(
-                f"Route {route_id} has insufficient ridership to justify a dedicated bus. "
-                "Students are redistributed to adjacent routes with available capacity."
-            ),
-            estimated_distance_saving_km=round(
-                next((m.total_distance_km for m in before.route_metrics if m.route_id == route_id), 0), 1
-            ),
-        ))
-
-    expected_improvements = [
-        ExpectedImprovement(
-            metric="Average bus utilization",
-            before_value=round(before.avg_load_factor * 100, 1),
-            after_value=round(after.avg_load_factor * 100, 1),
-            unit="%",
-            improvement_pct=round(delta.load_factor_improvement / before.avg_load_factor * 100, 1),
-        ),
-        ExpectedImprovement(
-            metric="Total daily distance",
-            before_value=before.total_distance_km,
-            after_value=after.total_distance_km,
-            unit="km",
-            improvement_pct=round(delta.distance_saved_pct, 1),
-        ),
-        ExpectedImprovement(
-            metric="Fleet size",
-            before_value=before.num_routes,
-            after_value=after.num_routes,
-            unit="buses",
-            improvement_pct=round(delta.routes_eliminated / before.num_routes * 100, 1),
-        ),
-    ]
-
-    return RouteRecommendation(
-        dataset_id=dataset_id,
-        analysis_summary=(
-            f"Analysis of {dataset.school_name}'s {before.num_routes}-route network identified "
-            f"{len(low_util)} underutilized route(s) operating below 50% capacity. "
-            f"Consolidating to {after.num_routes} routes maintains full student coverage "
-            f"while improving average utilization from {before.avg_load_factor:.0%} to {after.avg_load_factor:.0%}."
-        ),
-        inefficiencies=inefficiencies,
-        route_edits=route_edits,
-        expected_improvements=expected_improvements,
-        explanation=(
-            f"The current routing plan for {dataset.school_name} operates {before.num_routes} buses "
-            f"serving {before.total_riders} students across {before.total_distance_km:.1f} km of daily routes. "
-            f"However, {len(low_util)} of these routes are significantly underloaded, with buses running "
-            f"at less than half their seating capacity each morning.\n\n"
-            f"The recommended optimization eliminates {delta.routes_eliminated} bus route(s) by merging "
-            f"low-density pickup areas into adjacent routes that have available capacity. "
-            f"Every student currently served will continue to have a pickup stop within walking distance "
-            f"of their home — no students lose service.\n\n"
-            f"The primary financial benefit comes from retiring {delta.routes_eliminated} bus from daily "
-            f"operation, saving an estimated ${delta.estimated_annual_savings_usd:,} per year in combined "
-            f"fleet operating costs and fuel. Average bus utilization improves from "
-            f"{before.avg_load_factor:.0%} to {after.avg_load_factor:.0%}, making more efficient use "
-            f"of the district's existing vehicle fleet."
-        ),
-        confidence_score=0.82,
-        model_used="fallback (no API key configured)",
-    )
-
-
-# ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
 
 async def run_analysis(dataset_id: str) -> RouteRecommendation:
     """
-    Runs the full agentic analysis loop. Falls back to a static recommendation
-    if ANTHROPIC_API_KEY is not configured.
+    Runs the full agentic analysis loop. Falls back to the heuristic
+    recommender if ANTHROPIC_API_KEY is not configured.
     """
-    if not settings.anthropic_api_key:
-        logger.warning("ANTHROPIC_API_KEY not set — using fallback recommendation")
-        return _fallback_recommendation(dataset_id)
-
     dataset = get_dataset(dataset_id)
+
+    if not settings.anthropic_api_key:
+        logger.warning("ANTHROPIC_API_KEY not set — using heuristic recommender")
+        before = compute_before(dataset)
+        after = compute_after(dataset)
+        delta = compute_delta(before, after)
+        return heuristic_recommender.recommend(dataset, before, after, delta)
+
     route_ids = [r.route_id for r in dataset.routes]
 
     user_message = (
