@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     daily_trips: int = 2          # morning + afternoon
     school_days_per_year: int = 180
 
+    # Load-factor policy — single source of truth for both the heuristic
+    # recommender and the LLM system prompt. Values are seat-fill fractions.
+    load_factor_underutilized: float = 0.50   # at or below → consolidation candidate
+    load_factor_good: float = 0.70            # at or above → healthy utilization
+
     # LLM loop guard
     max_tool_turns: int = 8
 
