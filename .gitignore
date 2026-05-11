@@ -25,6 +25,9 @@ yarn-error.log*
 frontend/.next/
 frontend/out/
 
+# Downloaded source data
+backend/app/data/raw/*.zip
+
 # OS
 .DS_Store
 Thumbs.db

@@ -17,6 +17,11 @@ class RouteStop(BaseModel):
     arrival_offset_minutes: float
 
 
+class RoutePathPoint(BaseModel):
+    lat: float
+    lng: float
+
+
 class Route(BaseModel):
     route_id: str
     name: str
@@ -28,6 +33,7 @@ class Route(BaseModel):
     total_duration_minutes: float
     avg_load_factor: float
     merged_from: Optional[list[str]] = None
+    path: Optional[list[RoutePathPoint]] = None
 
 
 class Stop(BaseModel):
@@ -85,6 +91,10 @@ class Dataset(BaseModel):
     school_level: str            # "elementary" | "middle"
     school_lat: float
     school_lng: float
+    source_name: Optional[str] = None
+    source_url: Optional[str] = None
+    source_version: Optional[str] = None
+    source_notes: Optional[str] = None
     stops: list[Stop]
     zones: list[Zone]
     routes: list[Route]
